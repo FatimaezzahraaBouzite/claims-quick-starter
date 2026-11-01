@@ -1,166 +1,166 @@
 {
   "towards_crash": [
     [
+      "crashed",
+      11.945
+    ],
+    [
       "hit",
-      11.426
+      11.592
     ],
     [
       "accident",
-      11.346
-    ],
-    [
-      "crashed",
-      11.195
+      10.69
     ],
     [
       "collision",
-      8.338
+      8.41
     ],
     [
       "damage",
-      8.315
+      8.356
     ],
     [
       "crash",
-      8.172
+      8.025
     ],
     [
       "police",
-      7.919
+      7.411
     ],
     [
       "tree",
-      7.742
+      7.327
     ],
     [
       "did",
-      7.382
+      7.148
     ],
     [
       "rolled",
-      7.059
-    ],
-    [
-      "police report",
-      7.009
-    ],
-    [
-      "airbags",
-      6.556
-    ],
-    [
-      "accelerated",
-      6.533
+      6.924
     ],
     [
       "ditch",
-      6.352
+      6.608
     ],
     [
-      "deploy",
-      6.265
+      "police report",
+      6.585
+    ],
+    [
+      "accelerated",
+      6.527
     ],
     [
       "injuries",
-      6.2
+      6.514
     ],
     [
-      "wall",
-      6.181
+      "ended",
+      6.462
     ],
     [
-      "vehicle",
-      6.002
+      "deploy",
+      6.39
+    ],
+    [
+      "airbags",
+      6.282
     ],
     [
       "car",
-      5.806
+      5.995
     ],
     [
       "did deploy",
-      5.715
+      5.876
+    ],
+    [
+      "hitting",
+      5.771
     ]
   ],
   "towards_no_crash": [
     [
-      "dealer",
-      -5.094
+      "headrest",
+      -6.109
     ],
     [
-      "headrest",
-      -4.813
+      "dealer",
+      -4.893
     ],
     [
       "cause",
-      -4.754
+      -4.388
     ],
     [
       "transmission",
-      -4.356
-    ],
-    [
-      "warning",
-      -3.787
-    ],
-    [
-      "service",
-      -3.749
-    ],
-    [
-      "problem",
-      -3.686
-    ],
-    [
-      "miles",
-      -3.525
-    ],
-    [
-      "warranty",
-      -3.516
-    ],
-    [
-      "highway",
-      -3.41
-    ],
-    [
-      "dealership",
-      -3.385
-    ],
-    [
-      "000 miles",
-      -3.341
+      -3.654
     ],
     [
       "sunroof",
-      -3.227
+      -3.572
     ],
     [
-      "middle",
-      -3.199
+      "warning",
+      -3.428
     ],
     [
-      "engine",
-      -3.052
+      "highway",
+      -3.121
     ],
     [
-      "driving",
-      -3.011
+      "fuel",
+      -3.111
     ],
     [
-      "happen",
-      -2.845
+      "miles",
+      -3.065
     ],
     [
-      "battery",
-      -2.752
+      "reason",
+      -3.034
     ],
     [
-      "happens",
-      -2.696
+      "dealership",
+      -2.964
     ],
     [
-      "speeds",
-      -2.686
+      "times",
+      -2.922
+    ],
+    [
+      "screen",
+      -2.916
+    ],
+    [
+      "happened",
+      -2.898
+    ],
+    [
+      "000 miles",
+      -2.843
+    ],
+    [
+      "replaced",
+      -2.764
+    ],
+    [
+      "occurred",
+      -2.722
+    ],
+    [
+      "warranty",
+      -2.677
+    ],
+    [
+      "feels",
+      -2.66
+    ],
+    [
+      "sticky",
+      -2.656
     ]
   ]
 }

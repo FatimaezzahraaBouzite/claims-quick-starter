@@ -6,7 +6,7 @@ data:
   path: data/complaints.csv
   text_column: description
   target_column: crash
-  min_words: 10              # drop very short descriptions
+  min_words: 5              # drop very short descriptions
   drop_duplicate_text: true  # same text under two IDs would leak between train and test
 
 split:

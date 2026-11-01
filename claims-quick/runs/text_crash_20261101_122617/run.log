@@ -1,0 +1,8 @@
+12:26:17 | Run folder: runs\text_crash_20261101_122617
+12:26:17 | Loaded 40,458 rows from data/complaints.csv
+12:26:20 | Cleaning kept 40,174 of 40,458 rows; positive rate 5.2%
+12:26:20 | Train 32,139 / test 8,035 (stratified)
+12:30:32 | Best CV roc_auc = 0.974 with {'logreg__C': 3.0, 'tfidf__max_features': 50000, 'tfidf__ngram_range': (1, 2)}
+12:30:33 | Test ROC-AUC 0.981 | precision 0.764 | recall 0.884
+12:30:36 | Saved model, metrics, figures and errors to runs\text_crash_20261101_122617
+12:30:36 | Summary: {"roc_auc": 0.9809, "precision": 0.7641, "recall": 0.8841, "baseline_accuracy_majority_class": 0.9485}

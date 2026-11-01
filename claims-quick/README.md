@@ -36,24 +36,24 @@ _Auto-generated from `reports/eda/eda_summary.json` on 2026-11-01._
 <!-- AUTO:results:start -->
 | Model | Data | Result | Simple baseline |
 |---|---|---|---|
-| Crash flag from text | 39,942 NHTSA complaints (7,989 in test) | ROC-AUC 0.964, recall 83.5%, precision 71.9% | always "no crash": 94.8% accuracy |
+| Crash flag from text | 40,174 NHTSA complaints (8,035 in test) | ROC-AUC 0.981, recall 88.4%, precision 76.4% | always "no crash": 94.8% accuracy |
 | Severity from photo | _run `python -m src.image_model`_ | | |
 
 **Threshold trade-off (text model):**
 
 | Threshold | % flagged | Precision | Recall |
 |---|---|---|---|
-| 0.3 | 7.5% | 0.609 | 0.886 |
-| 0.4 | 6.7% | 0.665 | 0.860 |
-| 0.5 | 6.0% | 0.719 | 0.835 |
-| 0.6 | 5.4% | 0.786 | 0.818 |
-| 0.7 | 4.9% | 0.830 | 0.792 |
+| 0.3 | 7.9% | 0.604 | 0.923 |
+| 0.4 | 6.7% | 0.692 | 0.896 |
+| 0.5 | 6.0% | 0.764 | 0.884 |
+| 0.6 | 5.4% | 0.822 | 0.867 |
+| 0.7 | 5.0% | 0.853 | 0.826 |
 
-Best settings from cross-validation: `{'logreg__C': 3.0, 'tfidf__max_features': 50000, 'tfidf__ngram_range': [1, 2]}` (CV roc_auc 0.980).
+Best settings from cross-validation: `{'logreg__C': 3.0, 'tfidf__max_features': 50000, 'tfidf__ngram_range': [1, 2]}` (CV roc_auc 0.974).
 
-**Words that point to a crash:** hit, accident, crashed, collision, damage, crash, police, tree, did, rolled
+**Words that point to a crash:** crashed, hit, accident, collision, damage, crash, police, tree, did, rolled
 
-**Words that point to no crash:** dealer, headrest, cause, transmission, warning, service, problem, miles, warranty, highway
+**Words that point to no crash:** headrest, dealer, cause, transmission, sunroof, warning, highway, fuel, miles, reason
 
 ![text confusion matrix](reports/figures/text_confusion_matrix.png)
 ![top words](reports/figures/text_top_words.png)

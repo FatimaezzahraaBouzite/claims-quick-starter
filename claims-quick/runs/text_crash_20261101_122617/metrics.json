@@ -1,0 +1,55 @@
+{
+  "n_train": 32139,
+  "n_test": 8035,
+  "positive_rate_test": 0.0515,
+  "threshold": 0.5,
+  "roc_auc": 0.9809,
+  "average_precision": 0.8983,
+  "precision": 0.7641,
+  "recall": 0.8841,
+  "f1": 0.8197,
+  "accuracy": 0.98,
+  "baseline_accuracy_majority_class": 0.9485,
+  "threshold_table": [
+    {
+      "threshold": 0.3,
+      "pct_flagged": 7.9,
+      "precision": 0.604,
+      "recall": 0.923
+    },
+    {
+      "threshold": 0.4,
+      "pct_flagged": 6.7,
+      "precision": 0.692,
+      "recall": 0.896
+    },
+    {
+      "threshold": 0.5,
+      "pct_flagged": 6.0,
+      "precision": 0.764,
+      "recall": 0.884
+    },
+    {
+      "threshold": 0.6,
+      "pct_flagged": 5.4,
+      "precision": 0.822,
+      "recall": 0.867
+    },
+    {
+      "threshold": 0.7,
+      "pct_flagged": 5.0,
+      "precision": 0.853,
+      "recall": 0.826
+    }
+  ],
+  "best_params": {
+    "logreg__C": 3.0,
+    "tfidf__max_features": 50000,
+    "tfidf__ngram_range": [
+      1,
+      2
+    ]
+  },
+  "cv_score": 0.9743,
+  "cv_scoring": "roc_auc"
+}

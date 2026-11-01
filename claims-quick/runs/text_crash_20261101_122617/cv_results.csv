@@ -1,0 +1,13 @@
+params,mean_test_score,std_test_score,rank_test_score
+"{'logreg__C': 3.0, 'tfidf__max_features': 50000, 'tfidf__ngram_range': (1, 2)}",0.9742651689185241,0.004738965618151748,1
+"{'logreg__C': 1.0, 'tfidf__max_features': 50000, 'tfidf__ngram_range': (1, 2)}",0.9739151348840698,0.004369235832514812,2
+"{'logreg__C': 1.0, 'tfidf__max_features': 20000, 'tfidf__ngram_range': (1, 2)}",0.973368286026267,0.004637640948019778,3
+"{'logreg__C': 3.0, 'tfidf__max_features': 20000, 'tfidf__ngram_range': (1, 2)}",0.9730984447657465,0.00512777164162722,4
+"{'logreg__C': 0.3, 'tfidf__max_features': 50000, 'tfidf__ngram_range': (1, 2)}",0.9729344879415056,0.003911939049926397,5
+"{'logreg__C': 1.0, 'tfidf__max_features': 20000, 'tfidf__ngram_range': (1, 1)}",0.97279295811057,0.004804192383277577,6
+"{'logreg__C': 1.0, 'tfidf__max_features': 50000, 'tfidf__ngram_range': (1, 1)}",0.97279295811057,0.004804192383277577,6
+"{'logreg__C': 0.3, 'tfidf__max_features': 20000, 'tfidf__ngram_range': (1, 2)}",0.9726794029473323,0.004104429900874066,8
+"{'logreg__C': 0.3, 'tfidf__max_features': 20000, 'tfidf__ngram_range': (1, 1)}",0.9726246848858583,0.004238093786074499,9
+"{'logreg__C': 0.3, 'tfidf__max_features': 50000, 'tfidf__ngram_range': (1, 1)}",0.9726246848858583,0.004238093786074499,9
+"{'logreg__C': 3.0, 'tfidf__max_features': 20000, 'tfidf__ngram_range': (1, 1)}",0.9719387593321501,0.005319216344461237,11
+"{'logreg__C': 3.0, 'tfidf__max_features': 50000, 'tfidf__ngram_range': (1, 1)}",0.9719387593321501,0.005319216344461237,11
