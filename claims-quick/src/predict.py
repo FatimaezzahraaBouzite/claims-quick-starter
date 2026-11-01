@@ -1,13 +1,12 @@
-"""Try both models on your own input.
+"""Try both models on our own inputs.
 
 Run:
   python -m src.predict --text "I rear-ended the car in front when the brakes failed"
+  python -m src.predict --text "the brakes failed and I hit the car in front"
   python -m src.predict --photo data/photos/test/images/<some photo>.jpg
 """
 import argparse
-
 import joblib
-
 
 def main() -> None:
     ap = argparse.ArgumentParser()
