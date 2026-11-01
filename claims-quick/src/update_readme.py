@@ -70,7 +70,8 @@ def render_eda(s: dict | None) -> str:
     ])
 
 
-def render_results(text: dict | None, words: dict | None, image: dict | None) -> str:
+def render_summary(text: dict | None, image: dict | None) -> str:
+    """Headline table for the top of the README."""
     rows = ["| Model | Data | Result | Simple baseline |", "|---|---|---|---|"]
     if text:
         rows.append(f"| Crash flag from text | {text['n_train'] + text['n_test']:,} NHTSA complaints "
@@ -79,33 +80,41 @@ def render_results(text: dict | None, words: dict | None, image: dict | None) ->
                     f"{_pct(text['baseline_accuracy_majority_class'])} accuracy |")
     else:
         rows.append("| Crash flag from text | _run `python -m src.pipeline.run`_ | | |")
-    img = image
-    if img:
-        rows.append(f"| Severity from photo | {img['n_train'] + img['n_test']:,} photos "
-                    f"({img['n_test']:,} in {img['test_split']}) | accuracy {_pct(img['accuracy'])}, "
-                    f"macro-F1 {img['macro_f1']:.3f} | most common class: "
-                    f"{_pct(img['baseline_accuracy_majority_class'])} accuracy |")
+    if image:
+        rows.append(f"| Severity from photo | {image['n_train'] + image['n_test']:,} photos "
+                    f"({image['n_test']:,} in {image['test_split']}) | accuracy {_pct(image['accuracy'])}, "
+                    f"macro-F1 {image['macro_f1']:.3f} | most common class: "
+                    f"{_pct(image['baseline_accuracy_majority_class'])} accuracy |")
     else:
         rows.append("| Severity from photo | _run `python -m src.image_pipeline.run`_ | | |")
+    return "\n".join(rows + ["", f"_Auto-generated from `reports/` on {date.today():%Y-%m-%d}._"])
 
-    out = rows + [""]
-    if text:
-        out += ["**Threshold trade-off (text model):**", "",
-                "| Threshold | % flagged | Precision | Recall |", "|---|---|---|---|"]
-        out += [f"| {t['threshold']} | {t['pct_flagged']}% | {t['precision']:.3f} | {t['recall']:.3f} |"
-                for t in text["threshold_table"]]
-        out += ["", f"Best settings from cross-validation: `{text['best_params']}` "
-                    f"(CV {text['cv_scoring']} {text['cv_score']:.3f}).", ""]
+
+def render_text_results(text: dict | None, words: dict | None) -> str:
+    if not text:
+        return "_Run `python -m src.pipeline.run` to fill this section._"
+    out = ["| Metric | Value |", "|---|---|",
+           f"| Test complaints | {text['n_test']:,} ({_pct(text['positive_rate_test'])} crashes) |",
+           f"| ROC-AUC | {text['roc_auc']:.3f} |",
+           f"| Average precision (random = {text['positive_rate_test']:.3f}) | {text['average_precision']:.3f} |",
+           f"| Precision / recall / F1 at {text['threshold']} | {_pct(text['precision'])} / "
+           f"{_pct(text['recall'])} / {text['f1']:.3f} |",
+           f"| Accuracy (always \"no crash\") | {_pct(text['accuracy'])} "
+           f"({_pct(text['baseline_accuracy_majority_class'])}) |",
+           f"| Cross-validated {text['cv_scoring']} (train) | {text['cv_score']:.3f} |",
+           "", "**Threshold trade-off:**", "",
+           "| Threshold | % flagged | Precision | Recall |", "|---|---|---|---|"]
+    out += [f"| {t['threshold']} | {t['pct_flagged']}% | {t['precision']:.3f} | {t['recall']:.3f} |"
+            for t in text["threshold_table"]]
+    out += ["", f"Best settings from cross-validation: `{text['best_params']}`.", ""]
     if words:
-        out += ["**Words that point to a crash:** " + ", ".join(w for w, _ in words["towards_crash"][:10]),
-                "",
-                "**Words that point to no crash:** " + ", ".join(w for w, _ in words["towards_no_crash"][:10]),
-                ""]
-    for path, alt in [("reports/figures/text_confusion_matrix.png", "text confusion matrix"),
-                      ("reports/figures/text_top_words.png", "top words")]:
-        if Path(path).exists():
-            out.append(f"![{alt}]({path})")
-    out += ["", f"_Auto-generated from `reports/` on {date.today():%Y-%m-%d}._"]
+        out += ["**Words that point to a crash:** " + ", ".join(w for w, _ in words["towards_crash"][:12]), "",
+                "**Words that point to no crash:** " + ", ".join(w for w, _ in words["towards_no_crash"][:12]), ""]
+    for f, alt in [("text_confusion_matrix.png", "confusion matrix"), ("text_pr_curve.png", "precision-recall curve"),
+                   ("text_roc_curve.png", "ROC curve"), ("text_top_words.png", "top words")]:
+        if Path("reports/figures", f).exists():
+            out.append(f"![{alt}](reports/figures/{f})")
+    out += ["", f"_Auto-generated from `reports/text_metrics.json` on {date.today():%Y-%m-%d}._"]
     return "\n".join(out)
 
 
@@ -179,7 +188,8 @@ def main() -> None:
         return
     text = README.read_text(encoding="utf-8")
     text = replace_block(text, "eda", render_eda(_load(EDA)))
-    text = replace_block(text, "results", render_results(_load(TEXT), _load(WORDS), _load(IMAGE)))
+    text = replace_block(text, "summary", render_summary(_load(TEXT), _load(IMAGE)))
+    text = replace_block(text, "text_results", render_text_results(_load(TEXT), _load(WORDS)))
     text = replace_block(text, "image_eda", render_image_eda(_load(IMAGE_EDA)))
     text = replace_block(text, "image_results", render_image_results(_load(IMAGE)))
     README.write_text(text, encoding="utf-8")
