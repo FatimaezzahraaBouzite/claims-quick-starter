@@ -1,0 +1,36 @@
+# Configuration for the crash text-classification pipeline.
+
+run_name: text_crash
+
+data:
+  path: data/complaints.csv
+  text_column: description
+  target_column: crash
+  min_words: 5              # drop very short descriptions
+  drop_duplicate_text: true  # same text under two IDs would leak between train and test
+
+split:
+  test_size: 0.2
+  random_state: 42           # stratified on the target
+
+model:
+  tfidf:
+    min_df: 3
+    stop_words: english
+    sublinear_tf: true
+  logreg:
+    class_weight: balanced
+    max_iter: 2000
+
+tuning:                      # grid searched with stratified cross-validation on TRAIN only
+  cv_folds: 5
+  scoring: roc_auc
+  grid:
+    tfidf__ngram_range: [[1, 1], [1, 2]]
+    tfidf__max_features: [20000, 50000, 100000]
+    logreg__C: [0.3, 1.0, 3.0, 10.0, 30.0]
+
+evaluation:
+  threshold: 0.5             # probability above which we flag a crash
+  top_n_words: 20
+  n_errors_to_save: 50

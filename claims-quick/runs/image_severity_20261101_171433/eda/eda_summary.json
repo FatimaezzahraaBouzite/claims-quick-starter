@@ -1,0 +1,55 @@
+{
+  "n_photos": 6477,
+  "issues": {
+    "no_label": 0,
+    "unreadable": 0,
+    "duplicates_within_data": 2,
+    "duplicates_across_splits": 0,
+    "duplicates_removed": 2
+  },
+  "counts_by_split": {
+    "train": {
+      "minor": 1089,
+      "moderate": 3458,
+      "severe": 1274
+    },
+    "valid": {
+      "minor": 107,
+      "moderate": 206,
+      "severe": 95
+    },
+    "test": {
+      "minor": 41,
+      "moderate": 132,
+      "severe": 75
+    }
+  },
+  "class_share": {
+    "minor": 0.191,
+    "moderate": 0.5861,
+    "severe": 0.2229
+  },
+  "majority_class": "moderate",
+  "majority_share": 0.5861,
+  "by_class": {
+    "minor": {
+      "median_damages": 1.0,
+      "median_area": 0.1213,
+      "mixed_share": 0.0
+    },
+    "moderate": {
+      "median_damages": 1.0,
+      "median_area": 0.235,
+      "mixed_share": 0.246
+    },
+    "severe": {
+      "median_damages": 1.0,
+      "median_area": 0.3508,
+      "mixed_share": 0.1413
+    }
+  },
+  "mixed_severity_share": 0.1757,
+  "median_width": 640,
+  "median_height": 640,
+  "min_side_px": 640
+}

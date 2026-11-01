@@ -1,0 +1,26 @@
+# Configuration for the damage-severity photo pipeline.
+
+run_name: image_severity
+
+data:
+  root: data/photos              # unzipped Roboflow YOLO export (train/, valid/, test/, data.yaml)
+  class_order: [minor, moderate, severe]   # least to most serious
+  label_rule: worst              # a photo with several boxes takes its most serious damage
+  merge_valid_into_train: true   # given that a test/ split exists, valid/ is added to training
+                                 # (tuning uses cross-validation on training data instead)
+
+features:
+  backbone: resnet18             # ImageNet-pretrained, frozen (not retrained)
+  image_size: 224
+  batch_size: 32
+  cache: true                    # save features so re-runs skip the slow step
+
+tuning:                          # logistic regression on the 512 features, CV on TRAIN only
+  cv_folds: 5
+  scoring: f1_macro
+  grid:
+    logreg__C: [0.01, 0.03, 0.1, 0.3, 1.0]
+
+evaluation:
+  n_error_examples: 12           # misclassified photos shown in a grid
+  n_examples_per_class: 4        # example photos per class in the exploration grid

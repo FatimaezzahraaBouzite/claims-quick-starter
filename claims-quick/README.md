@@ -36,24 +36,24 @@ _Auto-generated from `reports/eda/eda_summary.json` on 2026-11-01._
 <!-- AUTO:results:start -->
 | Model | Data | Result | Simple baseline |
 |---|---|---|---|
-| Crash flag from text | 40,174 NHTSA complaints (8,035 in test) | ROC-AUC 0.981, recall 88.4%, precision 76.4% | always "no crash": 94.8% accuracy |
-| Severity from photo | _run `python -m src.image_model`_ | | |
+| Crash flag from text | 40,174 NHTSA complaints (8,035 in test) | ROC-AUC 0.981, recall 88.2%, precision 79.9% | always "no crash": 94.8% accuracy |
+| Severity from photo | 6,477 photos (248 in test) | accuracy 68.5%, macro-F1 0.653 | most common class: 53.2% accuracy |
 
 **Threshold trade-off (text model):**
 
 | Threshold | % flagged | Precision | Recall |
 |---|---|---|---|
-| 0.3 | 7.9% | 0.604 | 0.923 |
-| 0.4 | 6.7% | 0.692 | 0.896 |
-| 0.5 | 6.0% | 0.764 | 0.884 |
-| 0.6 | 5.4% | 0.822 | 0.867 |
-| 0.7 | 5.0% | 0.853 | 0.826 |
+| 0.3 | 7.6% | 0.623 | 0.918 |
+| 0.4 | 6.4% | 0.723 | 0.896 |
+| 0.5 | 5.7% | 0.799 | 0.882 |
+| 0.6 | 5.2% | 0.843 | 0.857 |
+| 0.7 | 4.8% | 0.879 | 0.826 |
 
-Best settings from cross-validation: `{'logreg__C': 3.0, 'tfidf__max_features': 50000, 'tfidf__ngram_range': [1, 2]}` (CV roc_auc 0.974).
+Best settings from cross-validation: `{'logreg__C': 3.0, 'tfidf__max_features': 100000, 'tfidf__ngram_range': [1, 2]}` (CV roc_auc 0.974).
 
-**Words that point to a crash:** crashed, hit, accident, collision, damage, crash, police, tree, did, rolled
+**Words that point to a crash:** crashed, hit, accident, damage, collision, crash, did, police, tree, police report
 
-**Words that point to no crash:** headrest, dealer, cause, transmission, sunroof, warning, highway, fuel, miles, reason
+**Words that point to no crash:** headrest, dealer, cause, transmission, warning, sunroof, reason, dealership, miles, fuel
 
 ![text confusion matrix](reports/figures/text_confusion_matrix.png)
 ![top words](reports/figures/text_top_words.png)
@@ -61,62 +61,68 @@ Best settings from cross-validation: `{'logreg__C': 3.0, 'tfidf__max_features': 
 _Auto-generated from `reports/` on 2026-11-01._
 <!-- AUTO:results:end -->
 
-## Analysis of the text model
+## Damage severity from photos
 
-### How good is it?
-- **The task is imbalanced:** only 5.2% of test complaints (414 of 8,035) report a crash. A model that
-  always answers "no crash" is already 94.8% accurate, so accuracy (98.0%) says little here. I judge the model on ranking quality and on precision/recall for the crash class.
-- **Ranking is strong:** ROC-AUC is 0.981. A randomly chosen crash complaint gets a higher score than a randomly chosen non-crash complaint 98% of the time.
-- **Average precision is 0.90, against 0.05 for random guessing** (the crash rate). This is the more
-  honest metric for a rare class, because it ignores the easy-to-classify non-crash majority.
-- **At the default threshold (0.5)** the model flags 6.0% of complaints, catches 88.4% of crashes
-  (366 of 414) and is right 76.4% of the time when it flags one (366 of 479).
-- **No sign of overfitting:** the cross-validated AUC on the training set (0.974) is close to the test
-  AUC (0.981), so the model generalises to complaints it has never seen.
+### Data exploration
+<!-- AUTO:image_eda:start -->
+| Class | train | valid | test | Share | Median damages | Median damaged area |
+|---|---|---|---|---|---|---|
+| minor | 1,089 | 107 | 41 | 19.1% | 1 | 12.1% |
+| moderate | 3,458 | 206 | 132 | 58.6% | 1 | 23.5% |
+| severe | 1,274 | 95 | 75 | 22.3% | 1 | 35.1% |
 
-### Choosing the threshold
-The threshold is a business decision, not a statistical one:
+- **6,477 photos** after validation. Majority class: **moderate** (58.6%), so always guessing it would be 58.6% accurate.
+- **17.6% of photos contain more than one severity**; each photo takes its most serious damage as its label.
+- **Data checks:** 0 photos without labels and 0 unreadable files removed; 2 duplicate files removed, 0 of which appeared in more than one split (kept only in the earliest split, so no test photo is also a training photo).
+- **Photo size:** median 640 x 640 px, smallest side 640 px (photos are resized to 224 x 224 for ResNet18).
 
-- **0.3:** flags 7.9% of complaints and catches 92.3% of crashes, with more false alarms (precision 60%).
-- **0.7:** flags 5.0% and is right 85% of the time, but misses 17% of crashes.
+![class balance](reports/image_eda/class_balance.png)
+![damaged area](reports/image_eda/damaged_area_by_class.png)
+![examples](reports/image_eda/examples_per_class.png)
 
-For claims triage, a missed serious claim costs more than an extra review, so I would use **0.3–0.4**:
-reviewing about 7–8% of complaints to catch about 90–92% of crashes. In production, I would set this
-threshold with the claims team, based on how many files their adjusters can review.
+_Auto-generated from `reports/image_eda/eda_summary.json` on 2026-11-01._
+<!-- AUTO:image_eda:end -->
 
-### What the model learned
-The strongest words are sensible and easy to explain: **crashed, hit, accident, collision, damage,
-crash, police, police report, tree, rolled, ditch, injuries**. Words pointing away from a crash describe mechanical or comfort problems and visits to the dealer: **headrest, dealer, dealership, transmission, sunroof, warning, fuel, screen, 000 miles**. Two less obvious words are worth noting:
-- **"did"** pushes towards crash, most likely from the frequent phrase "the air bags **did** not deploy", which appears in crash reports.
-- **"accelerated"** points to sudden-acceleration incidents, which often end in a collision.
+**My notes on the photo data:** _What we see in the example grid? Are the classes visually distinct?
+Is the dataset balanced? Any data issues?_
 
-### Error analysis
-I read the 25 most confident errors of each type (`errors_to_review.csv`). This is the most informative part of the project: **many errors come from the labels, not the model.**
+### Results (held-out test photos)
+<!-- AUTO:image_results:start -->
+| Metric | Model | Majority-class baseline |
+|---|---|---|
+| Accuracy | 68.5% | 53.2% |
+| Macro-F1 | 0.653 | 0.232 |
 
-**False positives** (the model says crash, the label says no crash; 113 in total):
-- **About 10 of 25 clearly describe a collision**, yet are labelled "no crash". Examples: a car that ran
-  into a house with the airbag deployed and a passenger injured, a car that rolled 3½ times and was
-  totaled, a rear-end collision with a police report. The model is right; the label is wrong. NHTSA
-  documents that since May 2021 a blank yes/no field is shown as "N", so a crash the driver did not tick
-  becomes "no crash".
-- **About 5 describe an airbag deploying without a real collision** (brushing a curb, a pothole). These
-  are genuinely ambiguous: is it a crash or not?
-- **About 6 are near-misses** ("almost hit 5 cars", "nearly hit a tree"). The wording is very close to
-  a crash, and a bag-of-words model can't fully separate "hit" from "almost hit".
+- **Test set:** 248 photos (`test` split); trained on 6,229.
+- **Recall by class:** minor 56.1% · moderate 68.2% · severe 76.0%.
+- **Size of mistakes:** 28.2% of test photos are off by one severity level, 3.2% by two (severe called minor: 6, minor called severe: 2).
+- **Best setting from cross-validation:** `{'logreg__C': 0.1}` (CV f1_macro 0.762).
 
-**False negatives** (the label says crash, the model says no crash; 48 in total):
-- **About 15 of 25 don't describe a crash at all** (a fuel pump, a transmission whine, a seat belt
-  buckle). The crash may have been reported only in the form, or ticked by mistake. No text model
-  can recover it from these descriptions.
-- **About 10 describe a crash, but in less common wording** ("slammed into road railing", "resulting in
-  impact", "I was t-boned") **or inside a very long description**, where the crash is one sentence among
-  many and its words carry less weight.
+![confusion matrix](reports/figures/image_confusion_matrix.png)
+![recall by class](reports/figures/image_recall_by_class.png)
+![most confident mistakes](reports/figures/image_error_examples.png)
 
-**What this means:** the 76% precision is a pessimistic estimate. A share of the "false positives" are
-correctly identified crashes with a wrong label. These counts come from the 25 most confident errors of
-each type, so they are not a random sample. The next step would be to relabel a random sample of
-errors to measure the label error rate properly.
+_Auto-generated from `reports/image_metrics.json` on 2026-11-01._
+<!-- AUTO:image_results:end -->
 
+### My analysis of the photo model
+<!-- Write here after each run. Questions to answer:
+     1. How much better than the baseline is it, and is that enough to be useful?
+     2. Which classes get confused? Are mistakes mostly off by one level (minor vs moderate)?
+     3. Look at error_examples.png: are the errors the model's fault or ambiguous labels?
+     4. Does performance depend on damaged area (open runs/<latest>/test_predictions.csv)?
+     5. What would you try next? -->
+_Your analysis here._
+
+## Photo pipeline
+`python -m src.image_pipeline.run` runs from one config file (`configs/image_severity.yaml`):
+
+load YOLO labels (one label per photo = its most serious damage) → validate (unlabelled and unreadable
+photos, duplicate files across splits) → explore (class balance, damaged area, example photos) →
+ImageNet-pretrained ResNet18 turns each photo into 512 features (frozen, cached) → standardise +
+class-weighted logistic regression, tuned with stratified cross-validation on the training photos →
+evaluate once on the test photos (accuracy, macro-F1, recall per class, majority-class baseline,
+off-by-one vs off-by-two errors) → save everything in `runs/` → README refreshed.
 
 ## Text pipeline
 `python -m src.pipeline.run` runs these steps from one config file (`configs/text_crash.yaml`):
@@ -162,6 +168,7 @@ python -m src.get_text_data     # downloads complaints (about 5 minutes)
 python -m src.explore           # data exploration -> reports/eda/ + README
 python -m src.pipeline.run --config configs/text_crash.yaml   # train + evaluate -> runs/ + README
 python -m pytest -q             # tests
-python -m src.image_model       # photos unzipped in data/photos/ (a few minutes on CPU) -> README
+python -m src.image_pipeline.run --stage explore   # photo exploration only -> README
+python -m src.image_pipeline.run                   # explore + train + evaluate -> runs/ + README
 python -m src.predict --text "the brakes failed and I hit the car in front"
 ```

@@ -1,0 +1,23 @@
+{
+  "n_train": 6229,
+  "n_test": 248,
+  "test_split": "test",
+  "accuracy": 0.6855,
+  "macro_f1": 0.6534,
+  "recall_by_class": {
+    "minor": 0.561,
+    "moderate": 0.6818,
+    "severe": 0.76
+  },
+  "baseline_accuracy_majority_class": 0.5323,
+  "baseline_macro_f1_majority_class": 0.2316,
+  "errors_off_by_one_class": 0.2823,
+  "errors_off_by_two_classes": 0.0323,
+  "severe_predicted_as_minor": 6,
+  "minor_predicted_as_severe": 2,
+  "best_params": {
+    "logreg__C": 0.1
+  },
+  "cv_score": 0.7624,
+  "cv_scoring": "f1_macro"
+}

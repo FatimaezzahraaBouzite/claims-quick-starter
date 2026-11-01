@@ -6,10 +6,9 @@ README.md contains blocks like:
     ...anything here is replaced on every run...
     <!-- AUTO:eda:end -->
 
-Everything OUTSIDE those blocks is yours: write your own comments there and
-they are never touched. This runs automatically at the end of src.explore,
-src.pipeline.run and src.image_model, or by hand:
-
+Everything OUTSIDE those blocks is where I write my own comments. 
+This runs automatically at the end of src.explore, src.pipeline.run and src.image_pipeline.run, 
+or by hand:
     python -m src.update_readme
 """
 import json
@@ -21,7 +20,8 @@ README = Path("README.md")
 EDA = Path("reports/eda/eda_summary.json")
 TEXT = Path("reports/text_metrics.json")
 WORDS = Path("reports/text_top_words.json")
-IMAGE = Path("reports/metrics.json")
+IMAGE = Path("reports/image_metrics.json")
+IMAGE_EDA = Path("reports/image_eda/eda_summary.json")
 
 
 def _load(path: Path):
@@ -79,14 +79,14 @@ def render_results(text: dict | None, words: dict | None, image: dict | None) ->
                     f"{_pct(text['baseline_accuracy_majority_class'])} accuracy |")
     else:
         rows.append("| Crash flag from text | _run `python -m src.pipeline.run`_ | | |")
-    img = (image or {}).get("image_severity_classifier")
+    img = image
     if img:
         rows.append(f"| Severity from photo | {img['n_train'] + img['n_test']:,} photos "
                     f"({img['n_test']:,} in {img['test_split']}) | accuracy {_pct(img['accuracy'])}, "
                     f"macro-F1 {img['macro_f1']:.3f} | most common class: "
-                    f"{_pct(img['baseline_accuracy_most_common_class'])} accuracy |")
+                    f"{_pct(img['baseline_accuracy_majority_class'])} accuracy |")
     else:
-        rows.append("| Severity from photo | _run `python -m src.image_model`_ | | |")
+        rows.append("| Severity from photo | _run `python -m src.image_pipeline.run`_ | | |")
 
     out = rows + [""]
     if text:
@@ -102,11 +102,67 @@ def render_results(text: dict | None, words: dict | None, image: dict | None) ->
                 "**Words that point to no crash:** " + ", ".join(w for w, _ in words["towards_no_crash"][:10]),
                 ""]
     for path, alt in [("reports/figures/text_confusion_matrix.png", "text confusion matrix"),
-                      ("reports/figures/text_top_words.png", "top words"),
-                      ("reports/figures/image_confusion_matrix.png", "image confusion matrix")]:
+                      ("reports/figures/text_top_words.png", "top words")]:
         if Path(path).exists():
             out.append(f"![{alt}]({path})")
     out += ["", f"_Auto-generated from `reports/` on {date.today():%Y-%m-%d}._"]
+    return "\n".join(out)
+
+
+def render_image_eda(s: dict | None) -> str:
+    if not s:
+        return "_Run `python -m src.image_pipeline.run --stage explore` to fill this section._"
+    classes = list(s["class_share"])
+    splits = list(s["counts_by_split"])
+    head = "| Class | " + " | ".join(splits) + " | Share | Median damages | Median damaged area |"
+    rows = [head, "|---" * (len(splits) + 4) + "|"]
+    for c in classes:
+        b = s["by_class"][c]
+        rows.append(f"| {c} | " + " | ".join(f"{s['counts_by_split'][sp].get(c, 0):,}" for sp in splits)
+                    + f" | {_pct(s['class_share'][c])} | {b['median_damages']:.0f} | {_pct(b['median_area'])} |")
+    i = s["issues"]
+    return "\n".join(rows + [
+        "",
+        f"- **{s['n_photos']:,} photos** after validation. Majority class: **{s['majority_class']}** "
+        f"({_pct(s['majority_share'])}), so always guessing it would be {_pct(s['majority_share'])} accurate.",
+        f"- **{_pct(s['mixed_severity_share'])} of photos contain more than one severity**; each photo takes "
+        "its most serious damage as its label.",
+        f"- **Data checks:** {i['no_label']} photos without labels and {i['unreadable']} unreadable files removed; "
+        f"{i['duplicates_within_data']} duplicate files removed, {i['duplicates_across_splits']} of which appeared "
+        "in more than one split (kept only in the earliest split, so no test photo is also a training photo).",
+        f"- **Photo size:** median {s['median_width']} x {s['median_height']} px, smallest side "
+        f"{s['min_side_px']} px (photos are resized to 224 x 224 for ResNet18).",
+        "",
+        "![class balance](reports/image_eda/class_balance.png)",
+        "![damaged area](reports/image_eda/damaged_area_by_class.png)",
+        "![examples](reports/image_eda/examples_per_class.png)",
+        "",
+        f"_Auto-generated from `reports/image_eda/eda_summary.json` on {date.today():%Y-%m-%d}._",
+    ])
+
+
+def render_image_results(m: dict | None) -> str:
+    if not m:
+        return "_Run `python -m src.image_pipeline.run` to fill this section._"
+    rec = " · ".join(f"{c} {_pct(v)}" for c, v in m["recall_by_class"].items())
+    out = [
+        "| Metric | Model | Majority-class baseline |", "|---|---|---|",
+        f"| Accuracy | {_pct(m['accuracy'])} | {_pct(m['baseline_accuracy_majority_class'])} |",
+        f"| Macro-F1 | {m['macro_f1']:.3f} | {m['baseline_macro_f1_majority_class']:.3f} |",
+        "",
+        f"- **Test set:** {m['n_test']:,} photos (`{m['test_split']}` split); trained on {m['n_train']:,}.",
+        f"- **Recall by class:** {rec}.",
+        f"- **Size of mistakes:** {_pct(m['errors_off_by_one_class'])} of test photos are off by one "
+        f"severity level, {_pct(m['errors_off_by_two_classes'])} by two (severe called minor: "
+        f"{m['severe_predicted_as_minor']}, minor called severe: {m['minor_predicted_as_severe']}).",
+        f"- **Best setting from cross-validation:** `{m['best_params']}` (CV {m['cv_scoring']} {m['cv_score']:.3f}).",
+        "",
+    ]
+    for f, alt in [("image_confusion_matrix.png", "confusion matrix"), ("image_recall_by_class.png", "recall by class"),
+                   ("image_error_examples.png", "most confident mistakes")]:
+        if Path("reports/figures", f).exists():
+            out.append(f"![{alt}](reports/figures/{f})")
+    out += ["", f"_Auto-generated from `reports/image_metrics.json` on {date.today():%Y-%m-%d}._"]
     return "\n".join(out)
 
 
@@ -124,6 +180,8 @@ def main() -> None:
     text = README.read_text(encoding="utf-8")
     text = replace_block(text, "eda", render_eda(_load(EDA)))
     text = replace_block(text, "results", render_results(_load(TEXT), _load(WORDS), _load(IMAGE)))
+    text = replace_block(text, "image_eda", render_image_eda(_load(IMAGE_EDA)))
+    text = replace_block(text, "image_results", render_image_results(_load(IMAGE)))
     README.write_text(text, encoding="utf-8")
     print("README.md auto sections updated")
 
