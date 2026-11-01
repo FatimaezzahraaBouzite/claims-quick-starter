@@ -7,8 +7,6 @@ Two small, explainable models for car insurance claims intake, built on public d
 2. **Computer vision:** classifies **damage severity** (minor / moderate / severe) from a car photo,
    using a pretrained ResNet18 as a feature extractor + logistic regression.
 
-> Sections between `AUTO` markers are regenerated from the latest run (`python -m src.update_readme`).
-> Write your own comments outside them.
 
 ## Data exploration
 <!-- AUTO:eda:start -->
@@ -32,15 +30,33 @@ Two small, explainable models for car insurance claims intake, built on public d
 _Auto-generated from `reports/eda/eda_summary.json` on 2026-11-01._
 <!-- AUTO:eda:end -->
 
-**My notes on the exploration:** <your interpretation: what surprised you, what it means for the model>
+**My notes on the exploration:** <>
 
 ## Results (held-out test data)
 <!-- AUTO:results:start -->
 | Model | Data | Result | Simple baseline |
 |---|---|---|---|
-| Crash flag from text | _run `python -m src.pipeline.run`_ | | |
+| Crash flag from text | 39,942 NHTSA complaints (7,989 in test) | ROC-AUC 0.964, recall 83.5%, precision 71.9% | always "no crash": 94.8% accuracy |
 | Severity from photo | _run `python -m src.image_model`_ | | |
 
+**Threshold trade-off (text model):**
+
+| Threshold | % flagged | Precision | Recall |
+|---|---|---|---|
+| 0.3 | 7.5% | 0.609 | 0.886 |
+| 0.4 | 6.7% | 0.665 | 0.860 |
+| 0.5 | 6.0% | 0.719 | 0.835 |
+| 0.6 | 5.4% | 0.786 | 0.818 |
+| 0.7 | 4.9% | 0.830 | 0.792 |
+
+Best settings from cross-validation: `{'logreg__C': 3.0, 'tfidf__max_features': 50000, 'tfidf__ngram_range': [1, 2]}` (CV roc_auc 0.980).
+
+**Words that point to a crash:** hit, accident, crashed, collision, damage, crash, police, tree, did, rolled
+
+**Words that point to no crash:** dealer, headrest, cause, transmission, warning, service, problem, miles, warranty, highway
+
+![text confusion matrix](reports/figures/text_confusion_matrix.png)
+![top words](reports/figures/text_top_words.png)
 
 _Auto-generated from `reports/` on 2026-11-01._
 <!-- AUTO:results:end -->
