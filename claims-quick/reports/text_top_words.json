@@ -2,165 +2,165 @@
   "towards_crash": [
     [
       "crashed",
-      11.945
+      11.816
     ],
     [
       "hit",
-      11.592
+      11.714
     ],
     [
       "accident",
-      10.69
-    ],
-    [
-      "collision",
-      8.41
+      10.855
     ],
     [
       "damage",
-      8.356
+      8.379
+    ],
+    [
+      "collision",
+      8.174
     ],
     [
       "crash",
-      8.025
-    ],
-    [
-      "police",
-      7.411
-    ],
-    [
-      "tree",
-      7.327
+      7.988
     ],
     [
       "did",
-      7.148
+      7.473
     ],
     [
-      "rolled",
-      6.924
+      "police",
+      7.449
     ],
     [
-      "ditch",
-      6.608
+      "tree",
+      7.237
     ],
     [
       "police report",
-      6.585
-    ],
-    [
-      "accelerated",
-      6.527
-    ],
-    [
-      "injuries",
-      6.514
-    ],
-    [
-      "ended",
-      6.462
-    ],
-    [
-      "deploy",
-      6.39
+      6.775
     ],
     [
       "airbags",
-      6.282
+      6.772
     ],
     [
-      "car",
-      5.995
+      "rolled",
+      6.717
     ],
     [
-      "did deploy",
-      5.876
+      "injuries",
+      6.611
+    ],
+    [
+      "ended",
+      6.595
+    ],
+    [
+      "accelerated",
+      6.508
+    ],
+    [
+      "deploy",
+      6.421
+    ],
+    [
+      "ditch",
+      6.281
+    ],
+    [
+      "pole",
+      5.748
     ],
     [
       "hitting",
-      5.771
+      5.687
+    ],
+    [
+      "did deploy",
+      5.508
     ]
   ],
   "towards_no_crash": [
     [
       "headrest",
-      -6.109
+      -5.254
     ],
     [
       "dealer",
-      -4.893
+      -4.542
     ],
     [
       "cause",
-      -4.388
+      -3.832
     ],
     [
       "transmission",
-      -3.654
-    ],
-    [
-      "sunroof",
-      -3.572
+      -3.3
     ],
     [
       "warning",
-      -3.428
+      -3.134
     ],
     [
-      "highway",
-      -3.121
-    ],
-    [
-      "fuel",
-      -3.111
-    ],
-    [
-      "miles",
-      -3.065
+      "sunroof",
+      -3.1
     ],
     [
       "reason",
-      -3.034
-    ],
-    [
-      "dealership",
-      -2.964
-    ],
-    [
-      "times",
       -2.922
     ],
     [
+      "dealership",
+      -2.824
+    ],
+    [
+      "miles",
+      -2.799
+    ],
+    [
+      "fuel",
+      -2.765
+    ],
+    [
+      "times",
+      -2.724
+    ],
+    [
+      "problem",
+      -2.63
+    ],
+    [
       "screen",
-      -2.916
+      -2.629
     ],
     [
-      "happened",
-      -2.898
-    ],
-    [
-      "000 miles",
-      -2.843
-    ],
-    [
-      "replaced",
-      -2.764
-    ],
-    [
-      "occurred",
-      -2.722
+      "highway",
+      -2.619
     ],
     [
       "warranty",
-      -2.677
+      -2.573
     ],
     [
-      "feels",
-      -2.66
+      "replaced",
+      -2.571
     ],
     [
-      "sticky",
-      -2.656
+      "000 miles",
+      -2.535
+    ],
+    [
+      "driving",
+      -2.483
+    ],
+    [
+      "happened",
+      -2.483
+    ],
+    [
+      "department",
+      -2.456
     ]
   ]
 }
