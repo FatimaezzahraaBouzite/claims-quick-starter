@@ -10,3 +10,4 @@ pillow
 pyyaml
 jupyter
 ipykernel
+pytest

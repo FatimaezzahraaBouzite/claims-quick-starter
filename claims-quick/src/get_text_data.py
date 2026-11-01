@@ -21,7 +21,7 @@ VEHICLES = [
     ("ford", "f-150"), ("ford", "escape"), ("hyundai", "elantra"), ("mazda", "cx-5"),
     ("chevrolet", "equinox"), ("nissan", "rogue"), ("kia", "sportage"), ("jeep", "grand cherokee"),
 ]
-YEARS = range(2015, 2023)
+YEARS = range(2015, 2025)
 
 
 def yes(value) -> bool:

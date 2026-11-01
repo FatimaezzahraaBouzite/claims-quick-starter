@@ -16,10 +16,21 @@ Two small, explainable models for car insurance claims intake, built on public d
 | Severity from photo | <N> photos | accuracy <...>, macro-F1 <...> | always the most common class: <...> accuracy |
 
 ![text](reports/figures/text_confusion_matrix.png)
+![words](reports/figures/text_top_words.png)
 ![image](reports/figures/image_confusion_matrix.png)
 
-**Words that point to a crash:** <paste from metrics.json>
+**Words that point to a crash:** <paste from reports/text_top_words.json>
 **Words that point to no crash:** <paste>
+
+## Text pipeline
+`python -m src.pipeline.run` runs these steps from one config file (`configs/text_crash.yaml`):
+
+load → validate & clean (drop short and duplicate texts) → stratified train/test split →
+TF-IDF + logistic regression in one scikit-learn `Pipeline` → grid search with 5-fold
+stratified cross-validation on the training set only → evaluation on the untouched test set
+(ROC-AUC, average precision, precision/recall, threshold table, majority-class baseline) →
+top words from the coefficients → everything saved in `runs/<name>_<timestamp>/`
+(model, metrics, config copy, log, figures, errors to review).
 
 ## Why these choices
 - **Logistic regression for both:** fast, and every prediction can be explained (word weights for
@@ -30,7 +41,8 @@ Two small, explainable models for car insurance claims intake, built on public d
   ignoring them.
 
 ## What I learned
-- <2-3 bullets: e.g. which complaints the text model gets wrong (see reports/text_errors.csv)>
+- <from exploration: crash rate, text length, strongest words, any data issues found>
+- <2-3 bullets: e.g. which complaints the text model gets wrong (see runs/<latest>/errors_to_review.csv)>
 - <which severity classes get confused and why (they're subjective; minor vs moderate overlap)>
 
 ## Data
@@ -52,7 +64,9 @@ py -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python -m src.get_text_data     # downloads complaints (about 5 minutes)
-python -m src.text_model
+python -m src.explore           # data exploration -> reports/eda/
+python -m src.pipeline.run --config configs/text_crash.yaml   # train + evaluate -> runs/
+python -m pytest -q             # tests for the cleaning step
 python -m src.image_model       # photos unzipped in data/photos/ (a few minutes on CPU)
 python -m src.predict --text "the brakes failed and I hit the car in front"
 ```
