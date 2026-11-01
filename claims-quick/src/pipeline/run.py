@@ -48,6 +48,8 @@ def main(config_path: str) -> Path:
         shutil.copy(f, figs / f"text_{f.name}")
     shutil.copy(run_dir / "metrics.json", "reports/text_metrics.json")
     shutil.copy(run_dir / "top_words.json", "reports/text_top_words.json")
+    from src.update_readme import main as update_readme
+    update_readme()
     log.info("Summary: %s", json.dumps({k: metrics[k] for k in
                                         ["roc_auc", "precision", "recall", "baseline_accuracy_majority_class"]}))
     return run_dir

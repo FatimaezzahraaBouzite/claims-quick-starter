@@ -3,5 +3,149 @@
   "duplicate_ids": 0,
   "duplicate_descriptions": 252,
   "crash_rate": 0.0512,
-  "median_words": 87.0
+  "median_words": 87.0,
+  "median_words_crash": 103.0,
+  "median_words_no_crash": 86.0,
+  "top_words_crash": [
+    {
+      "word": "pole",
+      "share_in_crash": 0.0454,
+      "share_in_no_crash": 0.0003,
+      "ratio": 126.2437
+    },
+    {
+      "word": "sternum",
+      "share_in_crash": 0.0121,
+      "share_in_no_crash": 0.0,
+      "ratio": 121.7729
+    },
+    {
+      "word": "ambulance",
+      "share_in_crash": 0.0304,
+      "share_in_no_crash": 0.0002,
+      "ratio": 108.1457
+    },
+    {
+      "word": "bruises",
+      "share_in_crash": 0.0203,
+      "share_in_no_crash": 0.0001,
+      "ratio": 99.8528
+    },
+    {
+      "word": "bruising",
+      "share_in_crash": 0.0198,
+      "share_in_no_crash": 0.0001,
+      "ratio": 97.487
+    },
+    {
+      "word": "crashed",
+      "share_in_crash": 0.2005,
+      "share_in_no_crash": 0.002,
+      "ratio": 96.4441
+    },
+    {
+      "word": "deploy",
+      "share_in_crash": 0.2816,
+      "share_in_no_crash": 0.0038,
+      "ratio": 73.1576
+    },
+    {
+      "word": "ribs",
+      "share_in_crash": 0.0155,
+      "share_in_no_crash": 0.0001,
+      "ratio": 67.5744
+    },
+    {
+      "word": "embankment",
+      "share_in_crash": 0.015,
+      "share_in_no_crash": 0.0002,
+      "ratio": 58.8214
+    },
+    {
+      "word": "totaled",
+      "share_in_crash": 0.0942,
+      "share_in_no_crash": 0.0015,
+      "ratio": 57.6093
+    }
+  ],
+  "top_words_no_crash": [
+    {
+      "word": "overheating",
+      "share_in_crash": 0.0,
+      "share_in_no_crash": 0.0165,
+      "ratio": 0.006
+    },
+    {
+      "word": "turbo",
+      "share_in_crash": 0.0,
+      "share_in_no_crash": 0.0122,
+      "ratio": 0.0081
+    },
+    {
+      "word": "quoted",
+      "share_in_crash": 0.0,
+      "share_in_no_crash": 0.0091,
+      "ratio": 0.0109
+    },
+    {
+      "word": "creating",
+      "share_in_crash": 0.0,
+      "share_in_no_crash": 0.0088,
+      "ratio": 0.0113
+    },
+    {
+      "word": "timing",
+      "share_in_crash": 0.0,
+      "share_in_no_crash": 0.008,
+      "ratio": 0.0123
+    },
+    {
+      "word": "cvt",
+      "share_in_crash": 0.0,
+      "share_in_no_crash": 0.0076,
+      "ratio": 0.0129
+    },
+    {
+      "word": "overheated",
+      "share_in_crash": 0.0,
+      "share_in_no_crash": 0.0074,
+      "ratio": 0.0133
+    },
+    {
+      "word": "welds",
+      "share_in_crash": 0.0,
+      "share_in_no_crash": 0.007,
+      "ratio": 0.0141
+    },
+    {
+      "word": "distracting",
+      "share_in_crash": 0.0,
+      "share_in_no_crash": 0.0067,
+      "ratio": 0.0147
+    },
+    {
+      "word": "misfiring",
+      "share_in_crash": 0.0,
+      "share_in_no_crash": 0.0067,
+      "ratio": 0.0147
+    }
+  ],
+  "leakage": {
+    "crash": {
+      "crash": 0.3111,
+      "no_crash": 0.0206
+    },
+    "accident": {
+      "crash": 0.2353,
+      "no_crash": 0.0588
+    },
+    "collision": {
+      "crash": 0.1618,
+      "no_crash": 0.0381
+    },
+    "airbag": {
+      "crash": 0.2377,
+      "no_crash": 0.0149
+    }
+  }
 }

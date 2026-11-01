@@ -7,20 +7,43 @@ Two small, explainable models for car insurance claims intake, built on public d
 2. **Computer vision:** classifies **damage severity** (minor / moderate / severe) from a car photo,
    using a pretrained ResNet18 as a feature extractor + logistic regression.
 
-> **TODO before publishing:** replace every `<...>` with your numbers from `reports/metrics.json`, then delete this note.
+> Sections between `AUTO` markers are regenerated from the latest run (`python -m src.update_readme`).
+> Write your own comments outside them.
+
+## Data exploration
+<!-- AUTO:eda:start -->
+| | |
+|---|---|
+| Complaints | 40,458 |
+| Crash rate | 5.1% |
+| Accuracy of always predicting "no crash" | 94.9% |
+| Median words (crash / no crash) | 103 / 86 |
+| Duplicate descriptions | 252 |
+
+- **Imbalance:** only 5.1% of complaints report a crash, so a model that always says "no crash" is already 94.9% accurate. I evaluate with ROC-AUC, precision and recall on the crash class instead.
+- **Length:** Crash descriptions are longer (median 103 vs 86 words), so length alone carries some signal.
+- **Words typical of crash complaints** (share of crash vs no-crash descriptions): **pole** (4.5% vs 0.0%), **sternum** (1.2% vs 0.0%), **ambulance** (3.0% vs 0.0%), **bruises** (2.0% vs 0.0%), **bruising** (2.0% vs 0.0%).
+- **Words typical of non-crash complaints:** **overheating**, **turbo**, **quoted**, **creating**, **timing**.
+- **Leakage check:** "crash" in 31.1% of crash vs 2.1% of no-crash; "accident" in 23.5% of crash vs 5.9% of no-crash; "collision" in 16.2% of crash vs 3.8% of no-crash; "airbag" in 23.8% of crash vs 1.5% of no-crash. These are words drivers use to describe what happened, not a copy of the label field.
+
+![crash rate by vehicle](reports/eda/crash_rate_by_vehicle.png)
+![length by crash flag](reports/eda/length_by_crash.png)
+
+_Auto-generated from `reports/eda/eda_summary.json` on 2026-11-01._
+<!-- AUTO:eda:end -->
+
+**My notes on the exploration:** <your interpretation: what surprised you, what it means for the model>
 
 ## Results (held-out test data)
+<!-- AUTO:results:start -->
 | Model | Data | Result | Simple baseline |
 |---|---|---|---|
-| Crash flag from text | <N> NHTSA complaints | AUC <...>, recall on crash <...>, precision <...> | always "no crash": <...> accuracy |
-| Severity from photo | <N> photos | accuracy <...>, macro-F1 <...> | always the most common class: <...> accuracy |
+| Crash flag from text | _run `python -m src.pipeline.run`_ | | |
+| Severity from photo | _run `python -m src.image_model`_ | | |
 
-![text](reports/figures/text_confusion_matrix.png)
-![words](reports/figures/text_top_words.png)
-![image](reports/figures/image_confusion_matrix.png)
 
-**Words that point to a crash:** <paste from reports/text_top_words.json>
-**Words that point to no crash:** <paste>
+_Auto-generated from `reports/` on 2026-11-01._
+<!-- AUTO:results:end -->
 
 ## Text pipeline
 `python -m src.pipeline.run` runs these steps from one config file (`configs/text_crash.yaml`):
@@ -30,7 +53,7 @@ TF-IDF + logistic regression in one scikit-learn `Pipeline` → grid search with
 stratified cross-validation on the training set only → evaluation on the untouched test set
 (ROC-AUC, average precision, precision/recall, threshold table, majority-class baseline) →
 top words from the coefficients → everything saved in `runs/<name>_<timestamp>/`
-(model, metrics, config copy, log, figures, errors to review).
+(model, metrics, config copy, log, figures, errors to review) → README results refreshed.
 
 ## Why these choices
 - **Logistic regression for both:** fast, and every prediction can be explained (word weights for
@@ -41,8 +64,7 @@ top words from the coefficients → everything saved in `runs/<name>_<timestamp>
   ignoring them.
 
 ## What I learned
-- <from exploration: crash rate, text length, strongest words, any data issues found>
-- <2-3 bullets: e.g. which complaints the text model gets wrong (see runs/<latest>/errors_to_review.csv)>
+- <which complaints the text model gets wrong and why (see runs/<latest>/errors_to_review.csv)>
 - <which severity classes get confused and why (they're subjective; minor vs moderate overlap)>
 
 ## Data
@@ -64,9 +86,9 @@ py -m venv .venv
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 python -m src.get_text_data     # downloads complaints (about 5 minutes)
-python -m src.explore           # data exploration -> reports/eda/
-python -m src.pipeline.run --config configs/text_crash.yaml   # train + evaluate -> runs/
-python -m pytest -q             # tests for the cleaning step
-python -m src.image_model       # photos unzipped in data/photos/ (a few minutes on CPU)
+python -m src.explore           # data exploration -> reports/eda/ + README
+python -m src.pipeline.run --config configs/text_crash.yaml   # train + evaluate -> runs/ + README
+python -m pytest -q             # tests
+python -m src.image_model       # photos unzipped in data/photos/ (a few minutes on CPU) -> README
 python -m src.predict --text "the brakes failed and I hit the car in front"
 ```

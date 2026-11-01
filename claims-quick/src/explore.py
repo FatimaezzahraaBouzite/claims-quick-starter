@@ -102,7 +102,9 @@ def main() -> None:
     print("\nMedian length by crash flag:")
     print(df.groupby("crash")["n_words"].median().to_string())
     print("-> If crash descriptions are much longer, length alone carries signal.")
-    summary["median_words"] = float(n_words.median())
+    med = df.groupby("crash")["n_words"].median()
+    summary.update(median_words=float(n_words.median()),
+                   median_words_crash=float(med.get(1, 0)), median_words_no_crash=float(med.get(0, 0)))
 
     fig, ax = plt.subplots(figsize=(8, 4))
     cap = n_words.quantile(0.99)
@@ -126,17 +128,23 @@ def main() -> None:
     print(lift.sort_values("ratio", ascending=False).head(15).round(3).to_string())
     print("\nWords most typical of NO-CRASH complaints:")
     print(lift.sort_values("ratio").head(15).round(3).to_string())
+    as_list = lambda t: [{"word": w, **{k: round(float(v), 4) for k, v in r.items()}} for w, r in t.iterrows()]
+    summary["top_words_crash"] = as_list(lift.sort_values("ratio", ascending=False).head(10))
+    summary["top_words_no_crash"] = as_list(lift.sort_values("ratio").head(10))
 
     # -------------------------------------------------- 4. leakage
     section("4. LEAKAGE CHECK")
+    summary["leakage"] = {}
     for term in ["crash", "accident", "collision", "airbag"]:
         has = df["description"].str.contains(term, case=False, na=False)
+        summary["leakage"][term] = {"crash": round(float(has[df["crash"] == 1].mean()), 4),
+                                    "no_crash": round(float(has[df["crash"] == 0].mean()), 4)}
         print(f"'{term}': in {has[df['crash'] == 1].mean():.1%} of crash vs "
               f"{has[df['crash'] == 0].mean():.1%} of no-crash descriptions")
     print("-> Strong words are expected: the model SHOULD use them. It's only leakage if the text\n"
-          "   repeats the label mechanically. Read a few examples below.")
+          "   repeats the label mechanically (e.g. a form field pasted in). Read a few examples below.")
 
-    # -------------------------------------------------- 5. examples
+    # ------------------------------------------------------------------ 5. examples
     section("5. EXAMPLES TO READ")
     for flag, label in [(1, "CRASH"), (0, "NO CRASH")]:
         print(f"\n--- {label} ---")
@@ -145,6 +153,8 @@ def main() -> None:
 
     (OUT / "eda_summary.json").write_text(json.dumps(summary, indent=2))
     print("\nDone. Charts and summary are in reports/eda/")
+    from src.update_readme import main as update_readme
+    update_readme()
 
 
 if __name__ == "__main__":
